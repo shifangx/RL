@@ -75,4 +75,4 @@ policy:
 
 cluster:
   gpus_per_node: 8
-  num_nodes: 8
+  num_nodes: 1

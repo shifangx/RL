@@ -40,6 +40,7 @@ from megatron.bridge.training.config import (
     DistributedDataParallelConfig,
     LoggerConfig,
     OptimizerConfig,
+    ProfilingConfig,
     SchedulerConfig,
     TokenizerConfig,
     TrainingConfig,
@@ -815,6 +816,9 @@ class MegatronPolicyWorker(AbstractPolicyWorker, ColocatablePolicyInterface):
             tokenizer=TokenizerConfig(
                 tokenizer_type="HuggingFaceTokenizer",
                 tokenizer_model=hf_model_name,
+            ),
+            profiling=ProfilingConfig(
+                nvtx_ranges=self.cfg["megatron_cfg"].get("nvtx_ranges", False),
             ),
         )
         # TODO: this validation should happen inside mbridge: https://github.com/NVIDIA-NeMo/Megatron-Bridge/issues/1665

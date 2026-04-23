@@ -1066,7 +1066,14 @@ def grpo_train(
         batch_cache: BatchedDataDict[DatumSpec] = None
         # This is the number of batches we processed so far at each step to generate responses whose std is non-zero. Maximum threshold is set by dynamic_sampling_max_gen_batches. Used in the case of dynamic sampling.
         dynamic_sampling_num_gen_batches = 0
-
+        print(f"▶ cwd: {__import__('os').getcwd()}", flush=True)
+        torch.cuda.memory._record_memory_history(
+            True,
+            # keep 100,000 alloc/free events from before the snapshot
+            trace_alloc_max_entries=100000,
+            # record stack information for the trace events
+            trace_alloc_record_context=True,
+        )
         # Run grpo/dapo training loop (single-turn)
         for batch in dataloader:
             print(
@@ -1590,7 +1597,15 @@ def grpo_train(
                     ],
                     logger,
                 )
+            # logging memory snapshot for debug
+            if total_steps == 3:
+                print("▶ for debug, taking a memory snapshot...", flush=True)
+                snapshot = torch.cuda.memory._snapshot()
+                from pickle import dump
 
+                print(f"▶ for debug, cwd: {__import__('os').getcwd()}", flush=True)
+                with open('../logs/memory_snapshot_step_3.pkl', 'wb') as f:
+                    dump(snapshot, f)
             # Plot ISL/OSL/ISL+OSL histograms to wandb
             if (
                 master_config["policy"]["generation"]

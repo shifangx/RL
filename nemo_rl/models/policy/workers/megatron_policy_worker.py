@@ -240,7 +240,6 @@ def setup_megatron_model(
         get_embedding_ranks=get_embedding_ranks,
         get_position_embedding_ranks=get_position_embedding_ranks,
     )
-
     if cfg.ft and cfg.ft.enable_ft_package:
         fault_tolerance.setup(cfg, state)
         fault_tolerance.maybe_setup_simulated_fault(cfg.ft)
